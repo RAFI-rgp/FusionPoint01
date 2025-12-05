@@ -59,7 +59,7 @@ export const updateUserData = async (req, res) => {
         fileName: profile.originalname,
       });
 
-      const url = imagekit.url({
+      updatedData.profile_picture = imagekit.url({
         path: response.filePath,
         transformation: [
           { quality: "auto" },
@@ -67,8 +67,6 @@ export const updateUserData = async (req, res) => {
           { width: "512" },
         ],
       });
-
-      updatedData.profile_picture = url;
     }
 
     // upload cover photo
@@ -79,7 +77,7 @@ export const updateUserData = async (req, res) => {
         fileName: cover.originalname,
       });
 
-      const url = imagekit.url({
+      updatedData.cover_photo = imagekit.url({
         path: response.filePath,
         transformation: [
           { quality: "auto" },
@@ -87,8 +85,6 @@ export const updateUserData = async (req, res) => {
           { width: "1280" },
         ],
       });
-
-      updatedData.cover_photo = url;
     }
 
     const updatedUser = await User.findOneAndUpdate(
@@ -112,9 +108,7 @@ export const updateUserData = async (req, res) => {
 export const discoverUsers = async (req, res) => {
   try {
     const clerkId = req.user.clerkId;
-
     const currentUser = await User.findOne({ clerkId });
-
     const { input } = req.body;
 
     const allUsers = await User.find({
@@ -260,6 +254,7 @@ export const sendConnectionRequest = async (req, res) => {
 export const getUserConnections = async (req, res) => {
   try {
     const clerkId = req.user.clerkId;
+
     const user = await User.findOne({ clerkId }).populate(
       "connections followers following"
     );

@@ -11,7 +11,7 @@ const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY
 
 if (!PUBLISHABLE_KEY) {
   throw new Error(
-    '❌ Missing Clerk Key: Add VITE_CLERK_PUBLISHABLE_KEY in your .env file'
+    ' Missing Clerk Key: Add VITE_CLERK_PUBLISHABLE_KEY in your .env file'
   )
 }
 

@@ -1,3 +1,5 @@
+// Full Clear
+
 import React from 'react'
 
 const Loading = ({ height = '100vh' }) => {

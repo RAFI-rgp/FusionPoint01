@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import Loading from "../components/Loading";
-import UserProfileInfo from "../components/UserProfileInfo";
-import PostCard from "../components/PostCard";
+import Loading from "../components/Loading.jsx";
+import UserProfileInfo from "../components/UserProfileInfo.jsx";
+import PostCard from "../components/PostCard.jsx";
 import moment from "moment";
-import ProfileModal from "../components/ProfileModal";
+import ProfileModal from "../components/ProfileModal.jsx";
 import { useAuth } from "@clerk/clerk-react";
-import api from "../api/axios";
+import api from "../api/axios.js";
 import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
 

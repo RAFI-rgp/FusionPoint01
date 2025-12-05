@@ -10,7 +10,7 @@ import toast from 'react-hot-toast'
 const PostCard = ({ post }) => {
 
   const navigate = useNavigate()
-  const currentUser = useSelector((state) => state.user.value)
+  const currentUser = useSelector((state) => state.user.value) 
 
   // likes → array হলে কাজ করবে
   const [likes, setLikes] = useState(post.likes_count || [])

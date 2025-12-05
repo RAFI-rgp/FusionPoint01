@@ -1,7 +1,7 @@
 // client/src/pages/Messages.jsx
 import React, { useEffect, useState } from "react";
 import { useAuth, useUser } from "@clerk/clerk-react";
-import api from "../api/axios"; // তোমার axios ইনস্ট্যান্স যেখানে BASEURL আছে
+import api from "../api/axios.js";
 import toast from "react-hot-toast";
 import { Link } from "react-router-dom";
 

@@ -6,7 +6,7 @@ import { useAuth } from '@clerk/clerk-react'
 import api from '../api/axios.js'
 import { useNavigate } from 'react-router-dom'
 
-const CreatePost = () => {
+const CreatePost = () => {  //
 
   const navigate = useNavigate()
   const [content, setContent] = useState('')
@@ -97,7 +97,7 @@ const CreatePost = () => {
           {/* Images Preview */}
           {images.length > 0 && (
             <div className="flex flex-wrap gap-2 mt-4">
-              {images.map((image, index) => (
+              {images.map((image, i) => (
                 <div key={index} className="relative group">
                   <img
                     src={URL.createObjectURL(image)}
