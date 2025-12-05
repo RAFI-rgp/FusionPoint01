@@ -6,7 +6,7 @@ import { inngest, functions } from "./inngest/index.js";
 import { serve } from "inngest/express";
 import { clerkMiddleware } from "@clerk/express";
 
-// Import Routes
+// Routes
 import userRouter from "./routes/userRoutes.js";
 import postRouter from "./routes/postRoutes.js";
 import storyRouter from "./routes/storyRoutes.js";
@@ -17,11 +17,11 @@ const app = express();
 // Connect Database
 connectDB();
 
-// Middlewares
+// Global Middlewares
 app.use(cors());
 app.use(express.json());
 
-// Clerk Middleware (must be applied BEFORE routes)
+// Clerk MUST come first
 app.use(clerkMiddleware());
 
 // Test Route
@@ -36,7 +36,7 @@ app.use("/api/post", postRouter);
 app.use("/api/story", storyRouter);
 app.use("/api/message", messageRouter);
 
-// Server Listen
+// Start Server
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () =>
   console.log(`Server is running on port ${PORT}`)

@@ -1,28 +1,19 @@
+// server/configs/multer.js
 import multer from "multer";
+import path from "path";
+import fs from "fs";
 
-// Use disk storage (files saved temporarily before uploading to ImageKit)
-const storage = multer.diskStorage({});
+const uploadsDir = path.join(process.cwd(), "uploads");
+if (!fs.existsSync(uploadsDir)) fs.mkdirSync(uploadsDir);
 
-// File size limit (optional but recommended)
-const limits = {
-  fileSize: 5 * 1024 * 1024, // 5 MB
-};
-
-// File filter (optional) — accepts only images
-const fileFilter = (req, file, cb) => {
-  if (
-    file.mimetype === "image/jpeg" ||
-    file.mimetype === "image/png" ||
-    file.mimetype === "image/webp"
-  ) {
-    cb(null, true);
-  } else {
-    cb(new Error("Only JPG, PNG, WEBP images are allowed."), false);
-  }
-};
-
-export const upload = multer({
-  storage,
-  limits,
-  fileFilter,
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => cb(null, uploadsDir),
+  filename: (req, file, cb) => {
+    const ext = path.extname(file.originalname);
+    const name = `${Date.now()}-${Math.random().toString(36).slice(2, 9)}${ext}`;
+    cb(null, name);
+  },
 });
+
+export const upload = multer({ storage });
+export default upload;

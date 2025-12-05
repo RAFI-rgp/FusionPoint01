@@ -1,23 +1,8 @@
-export const protect = async (req, res, next) => {
+import { getAuth } from "@clerk/express";
+
+export const protect = (req, res, next) => {
   try {
-    let authData = null;
-
-    // Case 1: req.auth() exists (Clerk middleware v5+)
-    if (typeof req.auth === "function") {
-      authData = await req.auth();
-    }
-
-    // Case 2: req.auth object exists (older Clerk versions)
-    else if (typeof req.auth === "object") {
-      authData = req.auth;
-    }
-
-    // Extract userId safely
-    const userId =
-      authData?.userId ||
-      authData?.user_id ||
-      req.userId || // fallback
-      null;
+    const { userId } = getAuth(req);  // Clerk থেকে userId পাওয়া যায়
 
     if (!userId) {
       return res.status(401).json({
@@ -26,14 +11,13 @@ export const protect = async (req, res, next) => {
       });
     }
 
-    // Attach to request
-    req.userId = userId;
-
+    req.userId = userId;  // request object এ userId যোগ করা
     next();
   } catch (error) {
+    console.log("Protect Middleware Error:", error);
     return res.status(500).json({
       success: false,
-      message: error.message,
+      message: "Middleware error",
     });
   }
 };

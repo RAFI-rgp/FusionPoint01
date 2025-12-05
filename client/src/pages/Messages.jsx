@@ -1,48 +1,81 @@
-import React from 'react'
-import { dummyConnectionsData } from '../assets/assets'
-import { Eye, MessageSquare } from 'lucide-react'
-import { useNavigate } from 'react-router-dom'
-import { useSelector } from 'react-redux'
+// client/src/pages/Messages.jsx
+import React, { useEffect, useState } from "react";
+import { useAuth, useUser } from "@clerk/clerk-react";
+import api from "../api/axios"; // তোমার axios ইনস্ট্যান্স যেখানে BASEURL আছে
+import toast from "react-hot-toast";
+import { Link } from "react-router-dom";
 
 const Messages = () => {
-  
-  const { connections } = useSelector((state)=>state.connections)
-  const navigate = useNavigate()
+  const { getToken } = useAuth();
+  const { user } = useUser();
+  const [recent, setRecent] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  const fetchRecent = async () => {
+    try {
+      setLoading(true);
+      const token = await getToken();
+      const { data } = await api.get("/api/user/recent-messages", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (data.success) setRecent(data.messages);
+      else toast.error(data.message || "Failed to load");
+    } catch (err) {
+      toast.error(err.message || "Something went wrong");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (!user) return;
+    fetchRecent();
+    // eslint-disable-next-line
+  }, [user]);
 
   return (
-    <div className="min-h-screen relative bg-indigo-50">
-      <div className="max-w-6xl mx-auto p-6">
-        {/* Title */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-slate-900 mb-2">Messages</h1>
-          <p className="text-slate-600">Talk to your friends and family</p>
-        </div>
+    <div className="max-w-3xl mx-auto p-6">
+      <h2 className="text-2xl font-semibold mb-4">Messages</h2>
 
-        {/* Connected Users */}
-        <div className="flex flex-col gap-3">
-          {connections.map((user) => (
-            <div key={user._id} className="max-w-xl flex flex-wrap gap-5 p-6 bg-white shadow rounded-md" >
-              <img src={user.profile_picture} alt=""  className="rounded-full size-12 mx-auto"/>
-              <div className="flex-1">
-                <p className="font-medium text-slate-700">{user.full_name}</p>
-                <p className="text-slate-500">@{user.username}</p>
-                <p className="text-sm text-gray-600">{user.bio}</p>
-              </div>
-              <div className="flex flex-col gap-2 mt-4">
-                <button onClick={() => navigate(`/messages/${user._id}`)} className="w-10 h-10 flex items-center justify-center text-sm rounded bg-slate-100 hover:bg-slate-200 text-slate-800 active:scale-95 transition cursor-pointer gap-1" >
-                  <MessageSquare className="w-4 h-4" />
-                </button>
+      {loading && <p>Loading...</p>}
 
-                <button onClick={() => navigate(`/profile/${user._id}`)}className="w-10 h-10 flex items-center justify-center text-sm rounded bg-slate-100 hover:bg-slate-200 text-slate-800 active:scale-95 transition cursor-pointer" >
-                  <Eye className="w-4 h-4" />
-                </button>
+      {!loading && recent.length === 0 && (
+        <p className="text-gray-500">No recent conversations</p>
+      )}
+
+      <div className="space-y-3">
+        {recent.map((m) => (
+          <Link
+            key={m.partner._id}
+            to={`/messages/${m.partner._id}`}
+            className="flex items-center gap-3 p-3 bg-white rounded shadow hover:shadow-md transition"
+          >
+            <img
+              src={m.partner.profile_picture || "/default-avatar.png"}
+              alt=""
+              className="w-12 h-12 rounded-full object-cover"
+            />
+            <div className="flex-1">
+              <div className="flex justify-between items-center">
+                <h4 className="font-medium">{m.partner.full_name}</h4>
+                <span className="text-xs text-gray-400">
+                  {new Date(m.lastMessage.createdAt).toLocaleString()}
+                </span>
               </div>
+              <p className="text-sm text-gray-600 truncate">
+                {m.lastMessage.text || (m.lastMessage.message_type === "image" ? "Image" : "")}
+              </p>
             </div>
-          ))}
-        </div>
+            {m.unseenCount > 0 && (
+              <div className="ml-2 text-sm bg-indigo-600 text-white px-2 py-1 rounded-full">
+                {m.unseenCount}
+              </div>
+            )}
+          </Link>
+        ))}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Messages
+export default Messages;
