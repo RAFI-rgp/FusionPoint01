@@ -2,10 +2,10 @@ import express from 'express';
 import cors from 'cors';
 import 'dotenv/config.js';
 import connectDB from './configs/db.js';
+import { inngest, functions } from './inngest/index.js';
+import { serve } from 'inngest/express';
 
-// Inngest disabled for now
-// import { inngest, functions } from './inngest/index.js';
-// import { serve } from 'inngest/express';
+const app = express();
 
 // Clerk disabled
 // import { clerkMiddleware } from '@clerk/express';
@@ -16,7 +16,6 @@ import connectDB from './configs/db.js';
 // import storyRouter from './routes/storyRoutes.js';
 // import messageRouter from './routes/messageRoutes.js';
 
-const app = express();
 
 // Connect Database
 connectDB();
@@ -29,7 +28,7 @@ app.use(express.json());
 app.get('/', (req, res) => res.send('server is running 🚀'));
 
 // Inngest disabled
-// app.use('/api/inngest', serve({ client: inngest, functions }));
+app.use('/api/inngest', serve({ client: inngest, functions }));
 
 // Routes disabled until created
 // app.use('/api/user', userRouter);
